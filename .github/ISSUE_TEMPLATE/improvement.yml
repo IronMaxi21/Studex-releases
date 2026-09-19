@@ -1,0 +1,59 @@
+name: Suggest an improvement
+description: Something Studex should do, or should do better.
+title: "[Improvement] "
+labels: ["improvement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. The most useful suggestions describe what you
+        were trying to get done, not only what to build — that usually points at a
+        better answer than either of us had first.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where in Studex
+      options:
+        - Library and folders
+        - Documents
+        - Canvas
+        - Flashcards and review
+        - PDFs
+        - Calendar, timetable and focus
+        - Search and Spotlight
+        - Sync and accounts
+        - Settings
+        - Somewhere else
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should Studex do?
+      placeholder: Describe the change as you would explain it to a friend using the app.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: What are you doing when you need it?
+      description: The revision, the subject, the point in the week — whatever the situation is.
+      placeholder: "Example: writing up practicals the night before they are due, with the PDF open beside my notes."
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you manage today?
+      description: Optional. A workaround tells us how much this is costing you.
+  - type: input
+    id: version
+    attributes:
+      label: Studex version
+      description: Settings → Updates shows it. The app fills this in when you suggest from inside it.
+      placeholder: "1.3.0"
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "26.0"
