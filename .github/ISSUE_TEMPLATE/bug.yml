@@ -1,0 +1,53 @@
+name: Report something broken
+description: Studex did the wrong thing, or stopped doing anything.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How can we make it happen?
+      description: Numbered steps if you can. "It happens most mornings after the Mac wakes up" is also useful.
+      placeholder: |
+        1. Open a document
+        2. …
+    validations:
+      required: true
+  - type: dropdown
+    id: often
+    attributes:
+      label: How often
+      options:
+        - Every time
+        - Most times
+        - Now and then
+        - It happened once
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Studex version
+      placeholder: "1.3.0"
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "26.0"
+  - type: markdown
+    attributes:
+      value: |
+        **Please do not paste anything private here** — issues are public. Screenshots of
+        your own notes are fine if you are happy for them to be; nothing else is needed.
