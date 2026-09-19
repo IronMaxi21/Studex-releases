@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<!-- A confirmation link carries a one-time token. Nothing about this page is
+     worth leaking it to, so no referrer leaves here and nothing is embedded. -->
+<meta name="referrer" content="no-referrer">
+<title>Studex Email Confirmed</title>
+<link rel="stylesheet" href="../assets/studex.css">
+</head>
+<body>
+<div class="aura"></div>
+
+<main class="pane">
+  <div class="mark" aria-hidden="true">S</div>
+
+  <!-- Three states, one page: confirmed, link expired, and a link opened
+       somewhere Studex cannot run. The markup ships with the ordinary one
+       visible so the page says something even if the script never runs. -->
+  <span class="badge" id="badge"><span class="dot"></span><span id="badgeText">Email confirmed</span></span>
+
+  <h1 id="title">Your email is confirmed</h1>
+  <p class="lede" id="lede">You can sign in to Studex now. If it is already installed on this Mac, open it below.</p>
+
+  <div class="actions">
+    <a class="btn" id="open" href="studex://home">Open Studex</a>
+    <a class="btn quiet" id="download" href="https://github.com/IronMaxi21/Studex-releases/releases/latest">Download Studex for Mac</a>
+  </div>
+
+  <p class="note" id="note">
+    Nothing happened when you pressed Open? Studex is not installed on this device —
+    open the app on your Mac and sign in there, or
+    <a href="https://github.com/IronMaxi21/Studex-releases/releases/latest">download it</a>.
+  </p>
+</main>
+
+<footer class="foot">
+  <a href="../">Studex</a> · <a href="https://github.com/IronMaxi21/Studex-releases/issues">Report a problem</a>
+</footer>
+
+<script>
+/*
+ * Supabase sends the outcome back in the fragment, or in the query string when
+ * the link was already dead. Either way the page's job is to say which of three
+ * things happened and then get out of the way — the app does the signing in.
+ */
+(function () {
+  var params = new URLSearchParams(location.search);
+  var hash = new URLSearchParams(location.hash.replace(/^#/, ''));
+  var pick = function (name) { return hash.get(name) || params.get(name) || ''; };
+
+  var error = pick('error') || pick('error_code');
+  var description = pick('error_description');
+
+  // The token in the fragment is spent the moment Supabase redirects here, but
+  // it should not sit in the address bar, the history entry or a screenshot.
+  if (location.hash || params.has('access_token')) {
+    try { history.replaceState(null, '', location.pathname); } catch (e) { /* file:// */ }
+  }
+
+  var badge = document.getElementById('badge');
+  var badgeText = document.getElementById('badgeText');
+  var title = document.getElementById('title');
+  var lede = document.getElementById('lede');
+  var open = document.getElementById('open');
+  var note = document.getElementById('note');
+
+  if (error) {
+    badge.classList.add('warn');
+    badgeText.textContent = 'Link expired';
+    title.textContent = 'This link has expired';
+    lede.textContent = /expired|otp/i.test(error + description)
+      ? 'Confirmation links last an hour. Open Studex and sign up again with the same address — a fresh email is on its way within seconds.'
+      : 'Studex could not confirm this address from this link. Open the app and try signing up again with the same address.';
+    open.textContent = 'Open Studex';
+    note.textContent = 'Still stuck after a second attempt? Tell us on GitHub and we will look at the account.';
+    return;
+  }
+
+  // A link opened on a phone is the common case — the mail app is there, and
+  // Studex is not. Saying so beats a button that silently does nothing.
+  if (!/Macintosh|Mac OS X/.test(navigator.userAgent)) {
+    lede.textContent = 'You can sign in to Studex now. Studex is a Mac app, so open it on your Mac — there is nothing left to do on this device.';
+    open.classList.add('hidden');
+    note.innerHTML = 'Not installed yet? <a href="https://github.com/IronMaxi21/Studex-releases/releases/latest">Download Studex for Mac</a>.';
+    return;
+  }
+
+  // On a Mac, try the app straight away. macOS asks before handing over, so a
+  // person who did not want this only sees a dialog they can dismiss.
+  setTimeout(function () { location.href = 'studex://home'; }, 400);
+})();
+</script>
+</body>
+</html>
